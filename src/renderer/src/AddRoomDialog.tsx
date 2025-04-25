@@ -11,7 +11,7 @@ import {
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
 import { Plus } from 'lucide-react'
-export function AddFriendDialog() {
+export function AddRoomDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -19,10 +19,10 @@ export function AddFriendDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
+          <DialogTitle>채팅방 생성</DialogTitle>
+          {/* <DialogDescription>
             Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
+          </DialogDescription> */}
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">

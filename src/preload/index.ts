@@ -1,8 +1,19 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  getData: () => ipcRenderer.invoke('get-data'),
+  createRoom: (password?: string, maxUsers?: number) =>
+    ipcRenderer.invoke('create-room', { password, maxUsers }),
+  localRegister: (email: string, password: string, nickname: string) =>
+    ipcRenderer.invoke('local-register', { email, password, nickname }),
+  localLogin: (email: string, password: string) =>
+    ipcRenderer.invoke('local-login', { email, password }),
+  getLocalUser: () => ipcRenderer.invoke('get-local-user'),
+  localLogout: () => ipcRenderer.invoke('local-logout'),
+  loginKakao: () => ipcRenderer.invoke('login-kakao')
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

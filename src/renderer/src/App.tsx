@@ -1,24 +1,35 @@
-import { SidebarProvider } from '@renderer/components/ui/sidebar'
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import Home from './Home'
-import AboutPage from './about/page'
-import { AppSidebar } from './AppSiderbar'
-import { SidebarTrigger } from './components/ui/sidebar'
+import { ThemeProvider } from './components/theme-provider'
+import { ThemeToggle } from './components/theme-toggle'
+import { MainLayout } from './components/layouts/MainLayout'
+import { Button } from './components/ui/button'
 
 function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarTrigger />
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/callback" element={<p>로그인중입니다...</p>} />
+            <Route
+              path="/test"
+              element={
+                <>
+                  <Button>
+                    <a href="/home">Home으로</a>
+                  </Button>
+                </>
+              }
+            >
+              <Route path="123" element={<>123</>} />
+            </Route>
+          </Route>
         </Routes>
       </HashRouter>
-    </SidebarProvider>
+      <ThemeToggle />
+    </ThemeProvider>
   )
 }
 

@@ -2,13 +2,21 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import './mongoDB'
+import './kakao'
+
+// IPC 핸들러 선언
+ipcMain.handle('get-data', async () => {
+  return { data: '메인 프로세스에서 온 데이터' }
+})
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
     minWidth: 900,
-    height: 670,
+    height: 1000,
+    minHeight: 80,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -20,6 +28,9 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    if (is.dev) {
+      mainWindow.webContents.openDevTools()
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

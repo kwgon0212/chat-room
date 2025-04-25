@@ -4,6 +4,7 @@ import {
   Home,
   Inbox,
   LogOut,
+  MessageCirclePlus,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -35,8 +36,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
-import { AddFriendDialog } from './AddFriendDialog'
-
+import { AddRoomDialog } from './AddRoomDialog'
+import { useAuthStore } from './store/authStore'
+import { LoginDialog } from './LoginDialog'
+import { RegisterDialog } from './RegisterDialog'
+import { Button } from './components/ui/button'
+import kakaoLoginImage from './assets/kakao.png'
 const items = [
   {
     title: 'Home',
@@ -62,112 +67,56 @@ const items = [
     title: 'Settings',
     url: '#',
     icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
   }
 ]
 
 export function AppSidebar() {
+  const { isAuthenticated, user, setUser } = useAuthStore()
+
+  const handleKakaoLogin = async () => {
+    const user = await window.api.loginKakao()
+    console.log(user)
+    setUser(user)
+  }
+
+  const handleLogout = async () => {
+    await window.api.localLogout()
+    setUser(null)
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Sidebar className="h-screen flex flex-col justify-center items-center">
+        <SidebarContent className="flex justify-center items-center p-5">
+          <h2 className="text-xl font-semibold mb-2">채팅을 시작해보세요</h2>
+
+          <div className="w-full space-y-2 flex flex-col items-center">
+            <LoginDialog />
+            <div className="flex items-center gap-2">
+              <span className="text-xs">계정이 없으신가요?</span>
+              <RegisterDialog />
+            </div>
+            <Button variant="ghost" className="p-0 cursor-pointer" onClick={handleKakaoLogin}>
+              <img src={kakaoLoginImage} alt="kakao-login" className="size-full object-fit" />
+            </Button>
+          </div>
+
+          <div className="mt-1 text-sm text-gray-500 text-center">
+            <p>계정이 없으신가요? 지금 가입하시면</p>
+            <p>모든 기능을 무료로 이용할 수 있습니다</p>
+          </div>
+        </SidebarContent>
+      </Sidebar>
+    )
+  }
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>채팅방</SidebarGroupLabel>
           <SidebarGroupAction title="채팅방 추가" className="cursor-pointer">
-            <AddFriendDialog />
+            <AddRoomDialog />
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -214,7 +163,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> {user?.nickname}#{user?.tag}
                   <ChevronRight className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -227,7 +176,7 @@ export function AppSidebar() {
                   <Settings className="text-muted-foreground" />
                   <span>설정</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="text-muted-foreground" />
                   <span>로그아웃</span>
                 </DropdownMenuItem>
